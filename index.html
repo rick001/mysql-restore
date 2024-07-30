@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload SQL File</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plupload/3.1.5/plupload.full.min.js"></script>
+</head>
+<body>
+    <form id="uploadForm">
+        <label for="dbHost">DB Host:</label>
+        <input type="text" id="dbHost" name="dbHost" required><br>
+        <label for="dbUser">DB User:</label>
+        <input type="text" id="dbUser" name="dbUser" required><br>
+        <label for="dbPass">DB Password:</label>
+        <input type="password" id="dbPass" name="dbPass" required><br>
+        <label for="dbName">DB Name:</label>
+        <input type="text" id="dbName" name="dbName" required><br>
+        <div id="fileList"></div>
+        <input type="button" id="pickFiles" value="Select Files">
+        <input type="button" id="uploadFiles" value="Upload">
+    </form>
+
+    <script>
+        var uploader = new plupload.Uploader({
+            runtimes: 'html5',
+            browse_button: 'pickFiles',
+            url: 'upload.php',
+            chunk_size: '10mb',
+            filters: {
+                max_file_size: '500mb',
+                mime_types: [{title: "SQL files", extensions: "sql,zip"}]
+            },
+            init: {
+                FilesAdded: function(up, files) {
+                    var fileList = document.getElementById('fileList');
+                    fileList.innerHTML = '';
+                    plupload.each(files, function(file) {
+                        fileList.innerHTML += `<div id="${file.id}">${file.name} (${plupload.formatSize(file.size)}) <b></b></div>`;
+                    });
+                },
+                UploadProgress: function(up, file) {
+                    document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = `<span>${file.percent}%</span>`;
+                },
+                Error: function(up, err) {
+                    console.log(err.message);
+                }
+            }
+        });
+
+        uploader.init();
+
+        document.getElementById('uploadFiles').onclick = function() {
+            uploader.setOption('multipart_params', {
+                dbHost: document.getElementById('dbHost').value,
+                dbUser: document.getElementById('dbUser').value,
+                dbPass: document.getElementById('dbPass').value,
+                dbName: document.getElementById('dbName').value
+            });
+            uploader.start();
+        };
+    </script>
+</body>
+</html>
