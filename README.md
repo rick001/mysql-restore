@@ -35,7 +35,7 @@ Installation
 Usage
 
     Access the Form
-        Open the form in your web browser (e.g., http://your-server/upload.html).
+        Open the form in your web browser (e.g., http://your-server/index.html).
 
     Fill Out the Form
         Enter your database credentials.
